@@ -238,6 +238,126 @@
             
               
                 
+                <a class="post-title-link" href="/2017/01/19/Glimmer3-使用与安装/" itemprop="url">
+                  Glimmer3-使用与安装
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-19T17:43:52+08:00" content="2017-01-19">
+              2017-01-19
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>###软件介绍:<br>Glimmer用于原核生物的基因预测，特别是细菌、古细菌、和病毒等的基因组。Glimmer（Gene Locator and Interpolated Markov ModelER）采用内插马尔可夫模型（interpolated Markov models，IMMs）来识别编码区域和从非编码的DNA中区分出来。Glimmer最新版本为3.02，运行速度与预测精确度都有很大提升，并且是一个免费开源的软件必须在Linux或者Mac OSX系统上才能使用。TIGR（Institute for Genomic Research，美国基因组研究所）作为Glimmer的开发者，就是以其作为预测微生物基因的主要工具，至令已经预测了超过100种细菌的基因组。（本段参考来源：<a href="http://liucheng.name/999/" target="_blank" rel="external">http://liucheng.name/999/</a>）</p>
+<p>###安装步骤:<br>测试机ubuntu上安装glimmer步骤：</p>
+<p>软件包的下载</p>
+<p>Glimmer主页：<a href="http://www.cbcb.umd.edu/software/glimmer/" target="_blank" rel="external">http://www.cbcb.umd.edu/software/glimmer/</a></p>
+<p>###Glimmer下载</p>
+<p>Download Glimmer v3.02：<a href="http://www.cbcb.umd.edu/software/glimmer/glimmer302.tar.gz" target="_blank" rel="external">http://www.cbcb.umd.edu/software/glimmer/glimmer302.tar.gz</a></p>
+<p>Glimmer的运行可能还需要”ELPH”程序，其作用下文会介绍。</p>
+<p>###Glimmer安装</p>
+<p>待软件包下载完成先行解压<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">tar -zxvf glimmer302b.tar.gz</div><div class="line"><span class="built_in">cd</span> glimmer302/src</div><div class="line">make</div></pre></td></tr></table></figure></p>
+<p>###ELPH主页</p>
+<p><a href="http://cbcb.umd.edu/software/ELPH/" target="_blank" rel="external">http://cbcb.umd.edu/software/ELPH/</a></p>
+<p>####ELPH安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">tar -zxvf ELPH-1.0.1.tar.gz</div><div class="line"><span class="built_in">cd</span> ELPH/sources</div><div class="line">make</div></pre></td></tr></table></figure>
+<p>###Glimmer用法</p>
+<p>glimmer3.02/docs/notes.pdf (docs目录下的notes.pdf里有详细的用法介绍)。</p>
+<p>###脚本程序<br>在scripts目录中有几个C-shell的脚本对于运行GLIMMER3是很有用的。每个脚本的开头指定GLIMMER执行目录和Awk脚本的目录。用户需根据自己的安装路径修改开始行的set glimmerpath 和 set awkpath,将”set awkpath、glimmerpath、elphbin“修改为对应的目录。</p>
+<p>“g3-from-scratch.csh” 使用long-orfs找到训练基因接着运行glimmer3。如果需要改变glimmer3选项可修改set glimmeropts。运行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">g3-from-scratch.csh genom.seq run1</div></pre></td></tr></table></figure></p>
+<p>genom.seq 是需预测基因的fasta格式的基因组序列， run1是输出文件的前缀。<br>这个脚本将运行下列运行行:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">long-orfs -n -t 1.15 genom.seq run1.longorfs</div><div class="line">extract -t genom.seq run1.longorfs</div><div class="line">build-icm -r run1.icm &lt; run1.train</div><div class="line">glimmer3 -o50 -g110 -t30 genom.seq run1.icm run1</div></pre></td></tr></table></figure></p>
+<p>“g3-from-training.csh” 使用一系列基因位置去抽提训练集，接着运行glimmer3. 这个脚本使用elph（www.tigr.org/software/ELPH）由位置清单列表中的起启位点的上游区域建立一个PWM。它也使用训练集中的第一个密码子来评估在基因组中的起始密码子的分布。</p>
+<p>运行：g3-from-training.csh genom.seq train.coords run2</p>
+<p>genom.seq 是需预测基因的fasta格式的基因组序列，train.coords是训练序列的位置， run2是输出文件的前缀.</p>
+<p>这个脚本将运行下列命令行:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">extract -t genom.seq train.coords &gt; run2.train</div><div class="line">build-icm -r run2.icm &lt; run2.train upstream-coords.awk 25 0 train.coords | extract genom.seq - &gt; run2.upstream</div><div class="line">elph run2.upstream LEN=6 | get-motif-counts.awk &gt; run2.motif</div><div class="line"><span class="built_in">set</span> startuse = ‘start-codon-distrib -3 genom.seq train.coords‘</div><div class="line">glimmer3 -o50 -g110 -t30 -b run2.motif -P <span class="variable">$startuse</span> genom.seq run2.icm run2</div></pre></td></tr></table></figure></p>
+<p>“g3-inerated.csh” 结合了前两个脚本。它使用第一次预测到的结果为第二次运行建立训练集。第二次运行的原因是第一次运行的结果会将比来自long-orfs的结果的更高的起始位点的正确性。</p>
+<p>运行：g3-iterated.csh genom.seq run3</p>
+<p>genom.seq 是需预测基因的fasta格式的基因组序列， run1是输出文件的前缀。</p>
+<p>这个脚本将运行下列命令行:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">long-orfs -n -t 1.15 genom.seq run3.longorfs</div><div class="line">extract -t genom.seq run3.longorfs &gt; run3.train</div><div class="line">build-icm -r run3.icm &lt; run3.train glimmer3 -o50 -g110 -t30 genom.seq run3.icm run3.run1 tail +2 run3.run1.predict &gt; run3.coords</div><div class="line">upstream-coords.awk 25 0 run3.coords | extract genom.seq - &gt; run3.upstream</div><div class="line">elph run3.upstream LEN=6 | get-motif-counts.awk &gt; run3.motif</div><div class="line"><span class="built_in">set</span> startuse = ‘start-codon-distrib -3 genom.seq run3.coords‘</div><div class="line">glimmer3 -o50 -g110 -t30 -b run3.motif -P <span class="variable">$startuse</span> genom.seq run3.icm run3</div></pre></td></tr></table></figure></p>
+<p>得到最终得到基因注释结果。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/09/01/A-simple-goal-to-achive/" itemprop="url">
                   A simple goal to achive
                 </a>
@@ -548,7 +668,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -558,7 +678,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
